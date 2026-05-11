@@ -1,0 +1,1001 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Simulacro INE – Vocalía Secretarial (v4 · V2)</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@400;500;600;700&display=swap');
+
+*, *::before, *::after { box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color:transparent; }
+:root {
+  --ink: #1a0a2e;
+  --ink2: #3d2056;
+  --rose: #8b0038;
+  --rose2: #c0003c;
+  --rose-light: #ffeef4;
+  --rose-mid: #ffd6e4;
+  --gold: #c9762a;
+  --gold-light: #fff5e6;
+  --green: #1a6b3c;
+  --green-light: #e6f5ed;
+  --red: #b01010;
+  --red-light: #fdeaea;
+  --blue: #0c3573;
+  --blue-light: #e8eef9;
+  --bg: #faf8fc;
+  --card: #ffffff;
+  --border: #e8dff2;
+  --muted: #7a6a8a;
+}
+body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--ink); min-height:100dvh; overflow-x:hidden; }
+
+/* ── HEADER ── */
+.header {
+  background: linear-gradient(135deg,#4a0020 0%,#8b0038 55%,#c0003c 100%);
+  color:white; padding:10px 14px;
+  display:flex; align-items:center; gap:10px;
+  box-shadow:0 2px 16px rgba(139,0,56,.35);
+  position:sticky; top:0; z-index:200;
+}
+.header-logo { font-size:1.4rem; flex-shrink:0; }
+.header-text { flex:1; min-width:0; }
+.header h1 { font-family:'DM Serif Display',serif; font-size:.9rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.header p  { font-size:.6rem; opacity:.75; margin-top:1px; letter-spacing:.2px; }
+.header-right { flex-shrink:0; text-align:right; }
+.timer { font-size:1.45rem; font-weight:700; font-variant-numeric:tabular-nums; letter-spacing:.5px; line-height:1; }
+.t-lbl { font-size:.52rem; opacity:.6; margin-top:1px; text-transform:uppercase; letter-spacing:.5px; }
+.timer.warning { color:#ffe082; }
+.timer.danger  { color:#ff6b6b; animation:pulse 1s infinite; }
+@keyframes pulse { 0%,100%{opacity:1}50%{opacity:.45} }
+.progress-wrap { background:rgba(139,0,56,.25); height:3px; }
+.progress-bar  { height:3px; background:rgba(255,255,255,.85); transition:width .4s ease; }
+
+/* ── MAIN ── */
+.main { padding:12px 12px 84px; max-width:600px; margin:0 auto; }
+
+/* ── START ── */
+.start-screen { background:var(--card); border-radius:16px; padding:22px 16px 24px; box-shadow:0 4px 24px rgba(26,10,46,.1); margin-top:14px; }
+.start-screen h2 { font-family:'DM Serif Display',serif; font-size:1.25rem; color:var(--rose); margin-bottom:8px; line-height:1.3; text-align:center; }
+.start-badge { display:inline-flex; align-items:center; gap:6px; background:linear-gradient(135deg,var(--rose),var(--rose2)); color:white; border-radius:20px; padding:5px 14px; font-size:.72rem; font-weight:700; letter-spacing:.3px; margin:0 auto 14px; width:fit-content; }
+.start-intro { background:var(--rose-light); border-left:4px solid var(--rose2); border-radius:0 10px 10px 0; padding:10px 13px; color:var(--rose); font-weight:600; margin-bottom:15px; font-size:.82rem; line-height:1.55; }
+.info-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:9px; margin:15px 0; }
+.info-card { background:var(--rose-light); border-radius:12px; padding:12px 8px; text-align:center; border:1.5px solid var(--rose-mid); }
+.info-card .num { font-family:'DM Serif Display',serif; font-size:1.65rem; color:var(--rose); line-height:1; }
+.info-card .lbl { font-size:.68rem; color:var(--muted); margin-top:3px; font-weight:600; text-transform:uppercase; letter-spacing:.3px; }
+.topic-section { text-align:left; margin:13px 0; }
+.topic-section-title { font-size:.71rem; font-weight:700; color:var(--rose); text-transform:uppercase; letter-spacing:.5px; margin-bottom:7px; padding-left:9px; border-left:3px solid var(--rose2); }
+.topic-grid { display:grid; grid-template-columns:1fr 1fr; gap:6px; margin-bottom:11px; }
+.topic-pill { background:var(--rose-light); border-radius:8px; padding:7px 10px; font-size:.73rem; color:var(--ink2); display:flex; justify-content:space-between; gap:6px; border:1px solid var(--rose-mid); }
+.topic-pill .cnt { font-weight:800; flex-shrink:0; color:var(--rose); }
+.dif-badge { display:flex; align-items:center; gap:7px; background:linear-gradient(135deg,#2a0010,#5a0025); color:white; border-radius:10px; padding:10px 14px; margin:14px 0; font-size:.8rem; font-weight:700; }
+.dif-badge span { font-size:1.1rem; }
+.sources-note { font-size:.72rem; color:var(--muted); margin-bottom:16px; line-height:1.6; background:#f6f2fb; padding:10px 12px; border-radius:8px; }
+.sources-note strong { color:var(--ink2); }
+
+/* ── QUESTION CARD ── */
+.question-card { background:var(--card); border-radius:14px; padding:16px 14px; box-shadow:0 2px 16px rgba(26,10,46,.08); margin-bottom:12px; animation:fadeUp .22s ease; border:1px solid var(--border); }
+@keyframes fadeUp { from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:translateY(0)} }
+.q-meta { display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; flex-wrap:wrap; gap:6px; }
+.q-badge { font-size:.64rem; font-weight:700; padding:4px 10px; border-radius:20px; text-transform:uppercase; letter-spacing:.3px; }
+.q-num  { color:var(--muted); font-size:.73rem; }
+.q-dif  { font-size:.6rem; font-weight:700; padding:3px 7px; border-radius:10px; letter-spacing:.2px; }
+.q-dif.alta  { background:#fff0e6; color:#8b4000; border:1px solid #f5c890; }
+.q-dif.muy-alta { background:#ffeaea; color:#8b0000; border:1px solid #f5a0a0; }
+
+/* PASSAGE */
+.passage { background:#f8f4ff; border-left:4px solid var(--rose2); padding:11px 13px; border-radius:0 9px 9px 0; margin-bottom:13px; font-size:.82rem; line-height:1.72; color:var(--ink2); }
+.passage-label { font-size:.62rem; font-weight:700; color:var(--rose); text-transform:uppercase; letter-spacing:.4px; margin-bottom:6px; }
+.norm-ref { font-size:.64rem; background:var(--gold-light); color:var(--gold); border:1px solid #f0d5b0; border-radius:5px; padding:2px 7px; display:inline-block; margin-top:5px; font-weight:600; }
+
+/* QUESTION TEXT */
+.question-text { font-size:.9rem; font-weight:600; line-height:1.55; margin-bottom:14px; color:var(--ink); }
+
+/* OPTIONS */
+.options { display:flex; flex-direction:column; gap:8px; }
+.option { display:flex; align-items:flex-start; gap:10px; padding:13px 12px; border:2px solid var(--border); border-radius:11px; cursor:pointer; transition:border-color .13s,background .13s; font-size:.85rem; line-height:1.45; min-height:50px; color:var(--ink); }
+.option:active:not(.disabled) { border-color:var(--rose2); background:var(--rose-light); }
+.option.selected  { border-color:var(--rose2); background:var(--rose-light); }
+.option.correct   { border-color:var(--green); background:var(--green-light); }
+.option.incorrect { border-color:var(--red); background:var(--red-light); }
+.option.disabled  { cursor:default; }
+.option-letter { width:27px; height:27px; border-radius:50%; background:#ede7f6; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:.73rem; flex-shrink:0; transition:background .13s,color .13s; color:var(--ink2); }
+.option.selected  .option-letter { background:var(--rose2); color:white; }
+.option.correct   .option-letter { background:var(--green); color:white; }
+.option.incorrect .option-letter { background:var(--red); color:white; }
+.opt-text { flex:1; }
+.opt-icon { flex-shrink:0; font-size:.9rem; }
+
+/* EXPLANATION */
+.explanation { margin-top:13px; padding:12px 13px; background:#f8f4ff; border-radius:10px; border-left:4px solid var(--rose2); font-size:.8rem; line-height:1.68; display:none; color:var(--ink2); }
+.explanation.show { display:block; animation:fadeUp .2s ease; }
+.explanation strong { color:var(--rose); }
+.explanation .fuente { display:inline-block; margin-top:7px; font-size:.65rem; color:var(--muted); background:#f0ebfa; padding:3px 8px; border-radius:5px; font-weight:600; }
+
+/* VER SOLUCIÓN */
+.ver-sol-wrap { text-align:center; margin-bottom:10px; }
+.btn-ver-sol { background:var(--card); border:2px solid var(--rose2); color:var(--rose); padding:9px 20px; border-radius:9px; font-weight:700; font-size:.81rem; cursor:pointer; min-height:44px; transition:all .13s; font-family:inherit; }
+.btn-ver-sol:active { background:var(--rose-light); }
+
+/* BUTTONS */
+.btn { padding:10px 18px; border-radius:11px; border:none; font-size:.85rem; font-weight:700; cursor:pointer; transition:all .15s; min-height:44px; font-family:inherit; }
+.btn:active { transform:scale(.96); }
+.btn-primary   { background:linear-gradient(135deg,var(--rose),var(--rose2)); color:white; }
+.btn-primary:active   { opacity:.88; }
+.btn-primary:disabled { opacity:.4; cursor:not-allowed; }
+.btn-secondary { background:#f0ebfa; color:var(--ink2); }
+.btn-secondary:active { background:#e3d9f5; }
+.btn-lg { padding:13px 26px; font-size:.92rem; border-radius:13px; }
+.btn-sm { padding:9px 15px; font-size:.79rem; min-height:40px; }
+
+/* BOTTOM NAV */
+.nav-bar { position:fixed; bottom:0; left:0; right:0; background:var(--card); border-top:1px solid var(--border); padding:8px 14px; padding-bottom:max(8px,env(safe-area-inset-bottom)); display:flex; justify-content:space-between; align-items:center; gap:8px; box-shadow:0 -4px 20px rgba(26,10,46,.08); z-index:200; }
+.nav-info { font-size:.76rem; color:var(--muted); line-height:1.4; }
+.nav-info span { color:var(--rose); font-weight:700; }
+.nav-btns { display:flex; gap:7px; flex-shrink:0; }
+
+/* RESULTS */
+.results-screen { background:var(--card); border-radius:16px; padding:24px 16px; box-shadow:0 4px 24px rgba(26,10,46,.1); margin-top:14px; text-align:center; }
+.score-circle { width:112px; height:112px; border-radius:50%; margin:0 auto 16px; display:flex; flex-direction:column; align-items:center; justify-content:center; font-family:'DM Serif Display',serif; font-size:2rem; font-weight:400; color:white; }
+.score-sub { font-family:'DM Sans',sans-serif; font-size:.68rem; font-weight:600; opacity:.85; }
+.score-good { background:linear-gradient(135deg,#8b0038,#c0003c); }
+.score-mid  { background:linear-gradient(135deg,#b05800,#e07a00); }
+.score-low  { background:linear-gradient(135deg,#7a0000,#c01010); }
+.stats-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin:16px 0; }
+.stat-card { background:var(--rose-light); border-radius:11px; padding:11px 8px; border:1px solid var(--rose-mid); }
+.stat-card .n { font-family:'DM Serif Display',serif; font-size:1.5rem; line-height:1; }
+.stat-card .l { font-size:.68rem; color:var(--muted); margin-top:3px; }
+.stat-correct .n { color:var(--green); }
+.stat-wrong .n   { color:var(--red); }
+.stat-skip .n    { color:var(--muted); }
+.area-row { display:flex; align-items:center; gap:9px; margin-bottom:8px; font-size:.79rem; }
+.area-name { flex:1; color:var(--ink2); }
+.area-bar-wrap { flex:2; background:#ede7f6; border-radius:4px; height:7px; }
+.area-bar { height:7px; border-radius:4px; transition:width .6s ease; }
+.area-pct { width:34px; text-align:right; font-weight:700; font-size:.76rem; }
+.weak-banner { background:linear-gradient(135deg,#4a0020,#8b0038); color:white; border-radius:12px; padding:13px 14px; margin:13px 0; text-align:left; }
+.weak-banner h4 { margin-bottom:5px; font-family:'DM Serif Display',serif; font-size:.95rem; }
+.weak-banner p  { font-size:.77rem; opacity:.88; margin-bottom:7px; }
+.weak-tags { display:flex; flex-wrap:wrap; gap:5px; }
+.weak-tag  { background:rgba(255,255,255,.22); border-radius:5px; padding:3px 9px; font-size:.72rem; font-weight:700; }
+.hidden { display:none !important; }
+@media(max-width:360px){ .topic-grid{grid-template-columns:1fr} .info-grid{grid-template-columns:1fr 1fr} }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-logo">⚖️</div>
+  <div class="header-text">
+    <h1>Vocalía Secretarial (v4 · V3)</h1>
+    <p>Conocimientos técnicos · Alta dificultad · 🔀 Aleatorio · Banco ampliado V3</p>
+  </div>
+  <div class="header-right">
+    <div class="timer" id="timer">55:00</div>
+    <div class="t-lbl">tiempo restante</div>
+  </div>
+</div>
+<div class="progress-wrap"><div class="progress-bar" id="progressBar" style="width:0%"></div></div>
+
+<div class="main">
+  <!-- START SCREEN -->
+  <div class="start-screen" id="startScreen">
+    <div style="text-align:center;margin-bottom:12px">
+      <div class="start-badge"><span>🎯</span> VERSIÓN 3 — V3 BANCO AMPLIADO</div>
+    </div>
+    <h2>Vocalía Secretarial<br><em style="font-size:.95rem">Junta Local y Distrital Ejecutiva</em></h2>
+    <div class="start-intro">
+      Segunda versión con preguntas <strong>completamente nuevas</strong> en todas las subáreas. Incluye casos prácticos sobre medios de impugnación (JIN, JDC, JRC, REC, RAP, RRV), procedimientos sancionadores (POS vs PES), conflictos laborales (JLI), Oficialía Electoral, transparencia, recursos financieros y proceso electoral.
+    </div>
+    <div class="dif-badge">
+      <span>⚠️</span>
+      Dificultad elevada — Distinguir entre medios e instancias es clave
+    </div>
+    <div class="info-grid">
+      <div class="info-card"><div class="num">45</div><div class="lbl">Preguntas</div></div>
+      <div class="info-card"><div class="num">55</div><div class="lbl">Minutos</div></div>
+      <div class="info-card"><div class="num">4</div><div class="lbl">Áreas</div></div>
+    </div>
+    <div class="topic-section">
+      <div class="topic-section-title">⚖️ 1. Jurídico-electoral (23 preguntas)</div>
+      <div class="topic-grid">
+        <div class="topic-pill"><span>1.1 Medios de impugnación</span><span class="cnt">8</span></div>
+        <div class="topic-pill"><span>1.2 Oficialía Electoral</span><span class="cnt">3</span></div>
+        <div class="topic-pill"><span>1.3 Transparencia y datos pers.</span><span class="cnt">5</span></div>
+        <div class="topic-pill"><span>1.4 Quejas y denuncias</span><span class="cnt">4</span></div>
+        <div class="topic-pill"><span>1.5 Violencia política de género</span><span class="cnt">2</span></div>
+        <div class="topic-pill"><span>1.6 Delitos electorales</span><span class="cnt">1</span></div>
+      </div>
+      <div class="topic-section-title">🏛️ 2. Órganos desconcentrados (4 preguntas)</div>
+      <div class="topic-grid">
+        <div class="topic-pill"><span>2.1 Sesiones y acuerdos</span><span class="cnt">4</span></div>
+      </div>
+      <div class="topic-section-title">💼 3. Gestión administrativa (7 preguntas)</div>
+      <div class="topic-grid">
+        <div class="topic-pill"><span>3.1 Recursos financieros</span><span class="cnt">4</span></div>
+        <div class="topic-pill"><span>3.2 Recursos humanos/SPEN</span><span class="cnt">3</span></div>
+      </div>
+      <div class="topic-section-title">🗳️ 4. Proceso electoral (11 preguntas)</div>
+      <div class="topic-grid">
+        <div class="topic-pill"><span>4.1 Consejos locales/distritales</span><span class="cnt">4</span></div>
+        <div class="topic-pill"><span>4.2 Procedimientos y candidaturas</span><span class="cnt">7</span></div>
+      </div>
+    </div>
+    <div class="sources-note">
+      <strong>📚 Bibliografía (V2):</strong> LGSMIME (2024) · LGIPE (2024) · CPEUM (2025) · LGTAIP (2025) · LGPDPPSO (2025) · Ley General en Materia de Delitos Electorales (2021) · Reglamento de Sesiones para Juntas Locales y Distritales (INE 2008, aún vigente) · Manual de Normas Administrativas en Materia de Recursos Financieros del INE (2017) · Reglamento de la Oficialía Electoral del INE (2017) · Reglamento de Quejas y Denuncias del INE (2017) · Estatuto SPEN (2024) · Guía Vocalía Secretarial Local y Distrital INE
+    </div>
+    <button class="btn btn-primary btn-lg" style="width:100%" onclick="startExam()">Comenzar diagnóstico V2 →</button>
+  </div>
+
+  <div id="examScreen" class="hidden"></div>
+  <div id="resultsScreen" class="hidden"></div>
+</div>
+
+<!-- BOTTOM NAV -->
+<div class="nav-bar hidden" id="navBar">
+  <div class="nav-info">
+    Preg. <span id="navCurrent">1</span> de <span id="navTotal">45</span>
+  </div>
+  <div class="nav-btns">
+    <button class="btn btn-secondary btn-sm" id="btnPrev" onclick="prevQ()">← Ant.</button>
+    <button class="btn btn-primary  btn-sm" id="btnNext" onclick="nextQ()">Sig. →</button>
+  </div>
+</div>
+
+<script>
+/* ═══════════════════════════════════════════════════════════
+   BANCO DE PREGUNTAS v4 — V2 ALTA DIFICULTAD
+   Preguntas completamente nuevas en todas las subáreas
+═══════════════════════════════════════════════════════════ */
+const Q = [
+
+  /* ══════════════════════════════════════════
+     1.1  MEDIOS DE IMPUGNACIÓN (8)
+  ══════════════════════════════════════════ */
+  { sa:"1.1", sal:"Medios de impugnación", area:"Jurídico-electoral", dif:"alta",
+    p:"Un ciudadano acude a la Junta Distrital y manifiesta que se le negó la expedición de su credencial para votar con fotografía y que, como consecuencia, no podrá registrarse como candidato independiente. Pregunta qué medio de impugnación debe promover y ante quién.",
+    pt:"JDC — derechos políticos individuales",
+    q:"¿Cuál es el medio de impugnación procedente y qué orientación general puede dar el Vocal Secretario?",
+    o:["El Juicio de Inconformidad (JIN), porque toda controversia que involucre candidaturas es del JIN",
+       "El Juicio para la Protección de los Derechos Político-Electorales del Ciudadano (JDC), procedente cuando se vulnera el derecho a votar (negativa de credencial), a ser votado o ante violaciones de derechos al interior de un partido; el ciudadano debe agotar las instancias administrativas previas y luego promover el JDC ante la Sala competente del TEPJF",
+       "El Recurso de Apelación (RAP), porque cualquier acto del INE se impugna por esa vía"],
+    c:1,
+    ex:"El JDC es la herramienta jurisdiccional más común para los ciudadanos; procede cuando se vulnera el derecho a votar (ejemplo: negativa de credencial), a ser votado, de asociación, de afiliación, o ante violaciones de derechos al interior de un partido. El Vocal Secretario puede orientar al ciudadano —sin asesorar técnicamente— sobre la naturaleza del medio y la necesidad de agotar instancias previas (recurso ante la propia autoridad registral) antes de acudir al TEPJF.",
+    f:"LGSMIME (2024), arts. 79-85; CPEUM (2025), art. 99" },
+
+  { sa:"1.1", sal:"Medios de impugnación", area:"Jurídico-electoral", dif:"alta",
+    p:null, pt:null,
+    q:"Tras la jornada electoral, un partido político desea impugnar específicamente los resultados consignados en las actas de cómputo distrital, la declaración de validez de la elección de diputado de mayoría relativa y la entrega de la constancia de mayoría. ¿Qué medio de impugnación es de uso exclusivo para este fin?",
+    o:["Recurso de Apelación (RAP) ante la Sala Superior",
+       "Juicio de Inconformidad (JIN), medio cuyo uso está estrictamente vinculado a los resultados electorales: es el mecanismo exclusivo para objetar los cómputos distritales o de entidad federativa, la validez de la elección y las constancias de mayoría; lo conocen las Salas Regionales del TEPJF",
+       "Recurso de Revisión (RRV) ante la Junta Local"],
+    c:1,
+    ex:"El JIN (arts. 49-60 LGSMIME) es el medio idóneo y exclusivo para impugnar los resultados de las elecciones federales en su etapa de cómputos: cómputo distrital de diputados, cómputo de entidad federativa de senadores, validez de la elección y entrega de constancias. No se usa para actos previos (campañas, registro) ni para actos administrativos generales del INE.",
+    f:"LGSMIME (2024), arts. 49-60" },
+
+  { sa:"1.1", sal:"Medios de impugnación", area:"Jurídico-electoral", dif:"muy-alta",
+    p:"El 15 de marzo, la Sala Regional Guadalajara del TEPJF dicta sentencia definitiva desechando un JIN presentado por un partido contra los resultados de un cómputo distrital. El partido considera que la Sala Regional incurrió en una interpretación inconstitucional. La sentencia se notifica el 16 de marzo. El abogado del partido debe definir el siguiente paso impugnativo.",
+    pt:"Cadena impugnativa — sentencia de Sala Regional",
+    q:"¿Cuál es el medio procedente, ante quién y en qué plazo?",
+    o:["Juicio de Revisión Constitucional Electoral (JRC) ante la Sala Superior, plazo de 4 días, por tratarse de violación constitucional",
+       "Recurso de Reconsideración (REC) ante la Sala Superior, plazo de 3 días hábiles contados desde la notificación, por ser el medio excepcional para revisar sentencias de fondo de las Salas Regionales del TEPJF",
+       "Un nuevo JIN ante la misma Sala Regional para que reconsidere su sentencia"],
+    c:1,
+    ex:"El Recurso de Reconsideración (REC) es la vía jurisdiccional para que la Sala Superior del TEPJF revise sentencias de fondo de las Salas Regionales en supuestos específicos (inaplicación de leyes electorales por inconstitucionalidad, criterios contrarios a jurisprudencia de la Sala Superior, asuntos de importancia y trascendencia). Su plazo es excepcionalmente de 3 días hábiles (rompe la regla general de 4 días). El JRC no procede contra sentencias del TEPJF sino contra actos de autoridades estatales.",
+    f:"LGSMIME (2024), arts. 61-70" },
+
+  { sa:"1.1", sal:"Medios de impugnación", area:"Jurídico-electoral", dif:"alta",
+    p:null, pt:null,
+    q:"¿Cuál es la diferencia esencial, por ámbito de autoridad, entre el Recurso de Revisión (RRV) y el Recurso de Apelación (RAP)?",
+    o:["Son sinónimos; ambos sirven para impugnar cualquier acto del INE",
+       "El RRV procede dentro de la estructura del INE para revisar actos o resoluciones de los órganos desconcentrados (Juntas Locales y Distritales) y se resuelve por la Junta de jerarquía superior; el RAP procede ante las Salas del TEPJF para impugnar resoluciones del Consejo General del INE (entre ellas multas, negativas de registro y resoluciones que recaigan a recursos de revisión)",
+       "El RRV se promueve ante el TEPJF y el RAP ante el Consejo General del INE"],
+    c:1,
+    ex:"La distinción es clave: el RRV es sede administrativa intra-INE (resuelve la Junta superior jerárquica). El RAP es sede jurisdiccional ante el TEPJF, y combate, entre otras, las multas impuestas por el Consejo General y las resoluciones del propio Consejo. Si la cadena impugnativa empieza en un órgano desconcentrado, se agota primero el RRV y, en su caso, después el RAP.",
+    f:"LGSMIME (2024), arts. 35-47" },
+
+  { sa:"1.1", sal:"Medios de impugnación", area:"Jurídico-electoral", dif:"muy-alta",
+    p:"Un partido político recibe una resolución del Consejo General del INE que le impone una multa económica por irregularidades detectadas en su informe anual de gastos ordinarios. Adicionalmente, otra resolución del mismo Consejo General le niega el registro de una nueva organización política como partido.",
+    pt:"Recursos contra actos del Consejo General del INE",
+    q:"¿Qué medio de impugnación procede contra ambas resoluciones y ante qué órgano jurisdiccional?",
+    o:["Recurso de Revisión (RRV) ante la Junta General Ejecutiva",
+       "Recurso de Apelación (RAP) ante la Sala Superior del TEPJF (y/o ante la Sala Regional competente según el caso); el RAP es la vía legal diseñada para impugnar las resoluciones del Consejo General del INE, incluyendo la imposición de multas a partidos y las negativas de registro de partidos",
+       "Juicio de Inconformidad (JIN) porque se trata de actos del INE"],
+    c:1,
+    ex:"El Recurso de Apelación (RAP) es el medio idóneo para combatir las resoluciones del Consejo General del INE en materia administrativa: multas a partidos, negativas de registro de partidos, sanciones, entre otros. Se promueve ante las Salas del TEPJF (la competencia entre Sala Superior y Salas Regionales se determina conforme a las reglas legales). El JIN está reservado a resultados electorales; el RRV a actos de órganos desconcentrados del INE.",
+    f:"LGSMIME (2024), arts. 40-47" },
+
+  { sa:"1.1", sal:"Medios de impugnación", area:"Jurídico-electoral", dif:"alta",
+    p:null, pt:null,
+    q:"¿En qué supuesto procede el Juicio de Revisión Constitucional Electoral (JRC) y quién está legitimado para promoverlo?",
+    o:["Procede contra cualquier acto del INE; lo pueden promover los ciudadanos sin restricción",
+       "El JRC es la vía excepcional impulsada por los partidos políticos (con legitimación restringida) para que el Tribunal Electoral federal revise la constitucionalidad de actos o resoluciones definitivas y firmes de las autoridades electorales de las entidades federativas, siempre que la violación reclamada sea determinante para el desarrollo del proceso electoral o para el resultado de la elección, y se hayan agotado las instancias previas",
+       "Procede contra sentencias de Salas Regionales del TEPJF en cualquier supuesto"],
+    c:1,
+    ex:"El JRC (arts. 86-89 LGSMIME) tiene legitimación restringida a los partidos políticos y a las coaliciones. Procede sólo contra resoluciones definitivas y firmes de autoridades electorales locales (OPLE, tribunales electorales estatales) siempre que: (1) se viole un precepto constitucional, (2) la violación sea determinante, (3) la reparación sea posible y (4) se hayan agotado las instancias previas. No procede contra el INE ni contra el TEPJF.",
+    f:"LGSMIME (2024), arts. 86-89" },
+
+  { sa:"1.1", sal:"Medios de impugnación", area:"Jurídico-electoral", dif:"alta",
+    p:null, pt:null,
+    q:"Un funcionario del INE adscrito a una Junta Distrital considera que se le ha rescindido injustificadamente su nombramiento. ¿Cuál es la vía jurisdiccional específica para dirimir esta controversia?",
+    o:["Juicio para la Protección de los Derechos Político-Electorales (JDC) ante la Sala Regional",
+       "Juicio para dirimir los conflictos o diferencias laborales de los servidores del INE (JLI), de naturaleza materialmente laboral y formalmente electoral, que se promueve ante la Sala Superior del TEPJF; es el mecanismo exclusivo para resolver controversias entre el INE como patrón y su personal",
+       "Demanda laboral ordinaria ante la Junta Federal de Conciliación y Arbitraje"],
+    c:1,
+    ex:"El Juicio Laboral (JLI) es el medio diseñado específicamente para las controversias entre el INE y sus servidores públicos (rescisiones, terminaciones, prestaciones, conflictos de trabajo). Tiene una doble naturaleza: materialmente laboral (versa sobre relación de trabajo) y formalmente electoral (lo resuelve el TEPJF, no las juntas laborales ordinarias). No es aplicable el JDC porque la materia no es político-electoral.",
+    f:"LGSMIME (2024), arts. 94-108; LGIPE (2024)" },
+
+  { sa:"1.1", sal:"Medios de impugnación", area:"Jurídico-electoral", dif:"muy-alta",
+    p:"El Consejo General del INE emite una resolución que ordena la cancelación del registro de un partido político por incumplimiento de obligaciones estatutarias en su vida interna. La cancelación se produce fuera del periodo de proceso electoral. El partido busca impugnar la resolución.",
+    pt:"Cancelación de registro fuera del proceso — vía procedente",
+    q:"¿Cuál es la afirmación INCORRECTA respecto de la procedencia del recurso?",
+    o:["El partido puede interponer Recurso de Apelación si demuestra que la resolución le causa un perjuicio real a su interés jurídico",
+       "El RAP procede porque la naturaleza del acto (cancelación de registro por incumplimiento estatutario) no guarda relación directa con un proceso electoral específico ni con sus resultados",
+       "El recurso es improcedente porque los actos de cancelación de registro guardan relación directa con el proceso electoral y deben impugnarse mediante JIN"],
+    c:2,
+    ex:"La opción C es INCORRECTA porque confunde el alcance de las reglas de procedencia. La cancelación de registro por incumplimiento de obligaciones estatutarias es un acto administrativo del Consejo General del INE que NO guarda relación directa con un proceso electoral específico ni con sus resultados; por lo tanto, SÍ procede el Recurso de Apelación ante el TEPJF, siempre que el partido acredite interés jurídico y los demás requisitos de procedencia. El JIN no es la vía porque no se controvierten cómputos ni resultados.",
+    f:"LGSMIME (2024), arts. 40-47; LGIPE (2024)" },
+
+  /* ══════════════════════════════════════════
+     1.2  OFICIALÍA ELECTORAL (3)
+  ══════════════════════════════════════════ */
+  { sa:"1.2", sal:"Oficialía Electoral", area:"Jurídico-electoral", dif:"alta",
+    p:"Un representante de partido pide al Vocal Secretario de la Junta Distrital que, en un acta de fe pública, además de describir lo que se observa en un acto público, asiente expresamente que la conducta del funcionario denunciado constituye 'actos anticipados de campaña' y 'uso indebido de recursos públicos'.",
+    pt:"Calificación jurídica — límites del Oficial Electoral",
+    q:"¿Puede el Vocal Secretario asentar esas calificaciones en el acta?",
+    o:["Sí, porque el Oficial Electoral tiene la facultad de calificar jurídicamente cualquier conducta que percibe",
+       "No; el Reglamento de la Oficialía Electoral impone los principios de objetividad e imparcialidad: el Oficial Electoral describe lo que percibe directamente por sus sentidos, sin emitir juicios de valor ni calificar jurídicamente las conductas (eso corresponde a la autoridad resolutora, no al fedatario); incluir esas calificaciones excedería sus facultades y podría viciar el acta",
+       "Sólo puede asentar la calificación jurídica si el representante de partido lo solicita por escrito"],
+    c:1,
+    ex:"El acta de fe pública debe limitarse a la descripción objetiva de los hechos: qué, quién, cuándo, dónde, cómo (de manera fáctica). Las calificaciones jurídicas ('actos anticipados de campaña', 'uso indebido de recursos', 'compra de votos') son valoraciones que corresponden a la autoridad resolutora del procedimiento sancionador. Un acta que contenga calificaciones jurídicas excede las facultades de la Oficialía Electoral y puede ser controvertida.",
+    f:"Reglamento de la Oficialía Electoral del INE (2017), arts. 2 y 13" },
+
+  { sa:"1.2", sal:"Oficialía Electoral", area:"Jurídico-electoral", dif:"alta",
+    p:null, pt:null,
+    q:"¿Quiénes son, conforme al Reglamento de la Oficialía Electoral del INE, los servidores públicos investidos con la fe pública electoral en los órganos desconcentrados?",
+    o:["Sólo el Vocal Ejecutivo de cada Junta",
+       "Los Vocales Secretarios de las Juntas Locales y Distritales tienen el carácter de Oficiales Electorales por disposición del Reglamento; además, el Secretario Ejecutivo del INE y otros servidores designados específicamente pueden ejercer la función de fe pública en términos del propio Reglamento",
+       "Cualquier funcionario del INE adscrito a una Junta, sin necesidad de designación específica"],
+    c:1,
+    ex:"El Reglamento de la Oficialía Electoral del INE establece que el Vocal Secretario de cada Junta Local o Distrital es Oficial Electoral por designación reglamentaria; junto con el Secretario Ejecutivo del INE y otros servidores específicamente investidos, son quienes pueden ejercer la fe pública electoral. No es una atribución genérica del personal del INE; requiere investidura formal.",
+    f:"Reglamento de la Oficialía Electoral del INE (2017), arts. 3 y 4" },
+
+  { sa:"1.2", sal:"Oficialía Electoral", area:"Jurídico-electoral", dif:"muy-alta",
+    p:"Durante la jornada electoral, en la Junta Distrital se reciben simultáneamente tres solicitudes de fe pública: una por un representante de partido para constatar la apertura tardía de una casilla, otra de un candidato para certificar un hecho en otro municipio, y otra de un ciudadano para certificar el contenido de una publicación en redes sociales que considera que es propaganda fuera de tiempo.",
+    pt:"Concurso de solicitudes — criterio de priorización",
+    q:"¿Cómo debe proceder el Vocal Secretario ante la pluralidad de solicitudes?",
+    o:["Atender sólo la primera solicitud recibida y rechazar las demás",
+       "Ponderar la trascendencia electoral, la oportunidad (riesgo de que el hecho se pierda) y la viabilidad práctica de cada solicitud; coordinarse con el Vocal Ejecutivo para distribuir las diligencias; en su caso, comisionar (cuando el Reglamento lo permita) a otro servidor habilitado o reagendar; documentar el criterio empleado y el resultado; informar a los solicitantes de la decisión",
+       "Levantar todas las actas simultáneamente fuera de la sede sin importar la disponibilidad de personal"],
+    c:1,
+    ex:"El Reglamento de la Oficialía Electoral no establece prelación rígida, pero exige ejercicio diligente de la fe pública. Ante pluralidad de solicitudes, el Vocal Secretario debe ponderar: (1) trascendencia electoral del hecho, (2) inminencia o pérdida del hecho a documentar, (3) viabilidad práctica (distancia, recursos, otros deberes). Coordina con el Vocal Ejecutivo, documenta su decisión y, en su caso, recurre a las habilitaciones que el Reglamento permita.",
+    f:"Reglamento de la Oficialía Electoral del INE (2017)" },
+
+  /* ══════════════════════════════════════════
+     1.3  TRANSPARENCIA Y PROTECCIÓN DE DATOS (5)
+  ══════════════════════════════════════════ */
+  { sa:"1.3", sal:"Transparencia y protección de datos", area:"Jurídico-electoral", dif:"alta",
+    p:null, pt:null,
+    q:"¿Cuál es el plazo máximo que tiene un sujeto obligado como el INE para responder una solicitud de acceso a la información pública conforme a la LGTAIP, y qué ocurre si requiere ampliación?",
+    o:["3 días hábiles improrrogables; vencido el plazo se entiende negada la información",
+       "Hasta 20 días hábiles a partir del día siguiente a la presentación; este plazo puede ampliarse hasta por 10 días hábiles más cuando existan razones que lo justifiquen, lo cual debe notificarse al solicitante antes del vencimiento del plazo original; si la información es de pronto acceso se debe entregar en menor tiempo",
+       "30 días naturales sin posibilidad de ampliación bajo ninguna circunstancia"],
+    c:1,
+    ex:"La LGTAIP (art. 132) establece que el plazo máximo para responder es de 20 días hábiles, que puede ampliarse excepcionalmente por 10 días más cuando existan razones justificadas, mediante notificación al solicitante. El plazo se cuenta desde el día siguiente a la presentación de la solicitud. La omisión de respuesta puede dar lugar a la afirmativa ficta o a recursos ante el INAI según el caso.",
+    f:"LGTAIP (2025), art. 132" },
+
+  { sa:"1.3", sal:"Transparencia y protección de datos", area:"Jurídico-electoral", dif:"alta",
+    p:null, pt:null,
+    q:"¿Qué es la 'información confidencial' conforme a la LGTAIP y en qué se diferencia de la 'información reservada'?",
+    o:["Son sinónimos; la ley los trata como equivalentes",
+       "La información confidencial es aquella que contiene datos personales de personas identificadas o identificables, protegidos por la LGPDPPSO, así como información protegida por secretos legalmente reconocidos (industrial, bancario, fiscal en su caso); la información reservada es información pública que, mediante prueba de daño, se clasifica temporalmente por razones de seguridad, defensa, prevención del delito u otros bienes jurídicos protegidos; la confidencial no requiere prueba de daño, la reservada sí",
+       "La confidencial sólo aplica a personas morales y la reservada sólo a personas físicas"],
+    c:1,
+    ex:"La distinción es esencial. Información confidencial: datos personales y secretos legalmente reconocidos; su protección es indefinida en principio (mientras el dato sea personal) y no requiere prueba de daño. Información reservada: información de origen público que se clasifica temporalmente (con plazo) por daño potencial a bienes jurídicos protegidos (seguridad, deliberación, persecución del delito); requiere prueba de daño y debe revisarse periódicamente.",
+    f:"LGTAIP (2025), arts. 113 y 116" },
+
+  { sa:"1.3", sal:"Transparencia y protección de datos", area:"Jurídico-electoral", dif:"alta",
+    p:"Un ciudadano presenta ante el área de transparencia del INE una solicitud para que se le entregue copia digital de todos los oficios firmados por el Vocal Ejecutivo de una determinada Junta Distrital durante 2025. El área de transparencia consulta con el Vocal Secretario sobre la viabilidad.",
+    pt:"Solicitud amplia — gestión documental",
+    q:"¿Qué debe considerar el Vocal Secretario al integrar la respuesta?",
+    o:["Negar la solicitud porque se trata de información generada por un solo funcionario y eso es información personal",
+       "Identificar los documentos que existen en los archivos de la Junta, verificar si contienen datos personales que requieran ser testados (versión pública), determinar si alguno está clasificado como reservado mediante prueba de daño previa, integrar la respuesta con los documentos que pueden entregarse y, en su caso, fundamentar la inexistencia o la clasificación de los que no se entregan; coordinarse con el área de transparencia y, en su caso, con el Comité de Transparencia",
+       "Cobrar al solicitante el costo de búsqueda exhaustiva antes de iniciar cualquier trámite"],
+    c:1,
+    ex:"Las solicitudes amplias son frecuentes y deben atenderse con criterios de máxima publicidad: (1) identificar lo existente en archivos, (2) testar datos personales para entregar versión pública, (3) verificar clasificaciones de reserva previas, (4) integrar respuesta entregando lo público y motivando lo no entregado, (5) coordinarse con el Comité de Transparencia si se requieren decisiones de clasificación. La inexistencia se declara con prueba documental.",
+    f:"LGTAIP (2025), arts. 132 y 138-140" },
+
+  { sa:"1.3", sal:"Transparencia y protección de datos", area:"Jurídico-electoral", dif:"muy-alta",
+    p:null, pt:null,
+    q:"¿Qué obligación específica establece la LGPDPPSO respecto del 'aviso de privacidad' y cuál es el rol del INE como responsable del tratamiento?",
+    o:["El aviso de privacidad es opcional; sólo se elabora si el titular lo solicita",
+       "El responsable (en este caso el INE) debe poner a disposición de los titulares un aviso de privacidad simplificado en el momento de la recolección directa y un aviso integral disponible en todo momento; debe contener la identidad del responsable, finalidades del tratamiento, mecanismos para ejercer derechos ARCO, transferencias de datos y bases jurídicas; el incumplimiento puede generar responsabilidad",
+       "El aviso de privacidad es un documento exclusivo del sector privado; el sector público no está obligado a elaborarlo"],
+    c:1,
+    ex:"La LGPDPPSO (arts. 26-29) obliga a los responsables —incluido el INE— a poner a disposición avisos de privacidad. Existen dos modalidades: simplificado (al momento del contacto directo, con información esencial) e integral (disponible permanentemente, con todos los elementos: responsable, finalidades, derechos ARCO, transferencias, base jurídica, plazos de conservación). Los Vocales Secretarios deben conocer los avisos aplicables a los datos que recaban en su gestión (denuncias, registros, comparecencias).",
+    f:"LGPDPPSO (2025), arts. 26-29" },
+
+  { sa:"1.3", sal:"Transparencia y protección de datos", area:"Jurídico-electoral", dif:"alta",
+    p:null, pt:null,
+    q:"¿Cuáles son las atribuciones del Comité de Transparencia del INE conforme a la LGTAIP?",
+    o:["Sólo emitir opiniones consultivas sin efectos vinculantes",
+       "Confirmar, modificar o revocar las clasificaciones de información reservada o confidencial efectuadas por los titulares de las áreas; ordenar generar versiones públicas; aprobar la declaración de inexistencia de información cuando se requiera; vigilar el cumplimiento de las obligaciones de transparencia; resolver sobre la ampliación del plazo de respuesta; coordinar acciones para garantizar el derecho de acceso",
+       "Únicamente recibir solicitudes de acceso sin facultad para decidir sobre clasificaciones"],
+    c:1,
+    ex:"El Comité de Transparencia (arts. 43 y 44 LGTAIP) es el órgano colegiado que, dentro de cada sujeto obligado, decide sobre clasificaciones, versiones públicas, declaratorias de inexistencia, ampliación de plazos y vigilancia del cumplimiento. Es presidido por el titular del sujeto obligado o quien designe. En el INE, funciona como instancia interna previa a cualquier recurso ante el INAI.",
+    f:"LGTAIP (2025), arts. 43 y 44" },
+
+  /* ══════════════════════════════════════════
+     1.4  QUEJAS Y DENUNCIAS (4)
+  ══════════════════════════════════════════ */
+  { sa:"1.4", sal:"Quejas y denuncias", area:"Jurídico-electoral", dif:"alta",
+    p:"Durante la jornada electoral, a las 14:30 horas, se recibe en la Junta Local Ejecutiva una denuncia ciudadana señalando que el alcalde de un municipio está usando recursos públicos para transportar votantes a las casillas y prometiéndoles despensas a cambio del voto. Los denunciantes aportan videos y fotografías.",
+    pt:"Caso — conducta durante la jornada electoral",
+    q:"¿Cuál es la acción procesalmente correcta de manera inmediata?",
+    o:["Iniciar un Procedimiento Ordinario Sancionador (POS) para investigar exhaustivamente los hechos",
+       "Activar la vía del Procedimiento Especial Sancionador (PES): la UTCE del INE recibe la queja, puede dictar (o proponer) medidas cautelares para detener la conducta y la sentencia final la dicta el TEPJF; el PES está diseñado específicamente para conductas que requieren respuesta inmediata durante procesos electorales (propaganda gubernamental indebida, actos anticipados, compra de votos, VPMRG)",
+       "Remitir la denuncia al TEPJF directamente mediante Juicio para la Protección de los Derechos Político-Electorales"],
+    c:1,
+    ex:"El PES es el mecanismo expedito para conductas que afectan la equidad de la contienda durante el proceso electoral (compra de votos, uso de recursos públicos, propaganda gubernamental indebida, actos anticipados, VPMRG). Tiene plazos sumamente cortos (horas o pocos días) y permite medidas cautelares. La vía es DUAL: la UTCE del INE instruye (recibe, admite, recaba pruebas, propone medidas cautelares que decreta la Comisión de Quejas) y la sentencia de fondo la dicta el TEPJF. El POS, por contraste, es para faltas ordinarias sin urgencia.",
+    f:"LGIPE (2024), arts. 470-477; Reglamento de Quejas y Denuncias del INE (2017)" },
+
+  { sa:"1.4", sal:"Quejas y denuncias", area:"Jurídico-electoral", dif:"alta",
+    p:null, pt:null,
+    q:"¿Cuál es la diferencia clave, en cuanto a autoridad resolutora, entre el Procedimiento Ordinario Sancionador (POS) y el Procedimiento Especial Sancionador (PES)?",
+    o:["Ambos los resuelve totalmente el Consejo General del INE",
+       "El POS lo resuelve íntegramente el INE: la UTCE instruye y el Consejo General del INE dicta la resolución de fondo; el PES tiene una vía dual: la UTCE recibe la queja, la admite y recaba pruebas pero la sentencia final la dicta el TEPJF (Sala Regional Especializada o sala correspondiente); esta es la diferencia procesal más importante entre ambos procedimientos",
+       "Ambos los resuelve totalmente el TEPJF; el INE sólo recibe las denuncias"],
+    c:1,
+    ex:"La distinción es estructural: en el POS, todo el procedimiento (instrucción y resolución) ocurre en sede administrativa del INE; el Consejo General dicta la sanción y, en su caso, esa resolución es impugnable por RAP ante el TEPJF. En el PES, la sede se divide: instrucción en el INE (UTCE), resolución jurisdiccional en el TEPJF (la Sala Regional Especializada conoce típicamente). El PES tiene además plazos cortos y faculta a la Comisión de Quejas del INE a decretar medidas cautelares.",
+    f:"LGIPE (2024), arts. 470-477; Reglamento de Quejas y Denuncias del INE (2017)" },
+
+  { sa:"1.4", sal:"Quejas y denuncias", area:"Jurídico-electoral", dif:"muy-alta",
+    p:"Una denuncia se recibe en la Junta Distrital fuera del periodo de proceso electoral y refiere irregularidades en el padrón electoral local atribuidas al partido político X (presunta inclusión irregular de afiliados). No hay urgencia ni afectación inmediata a un proceso comicial.",
+    pt:"Selección del procedimiento — fuera de proceso",
+    q:"¿Qué procedimiento corresponde y por qué?",
+    o:["Procedimiento Especial Sancionador (PES) porque toda irregularidad de un partido se atiende por PES",
+       "Procedimiento Ordinario Sancionador (POS), que se puede instaurar en cualquier tiempo para investigar faltas administrativas generales que no requieren solución inmediata ni están directamente vinculadas a la urgencia de un proceso electoral; típicamente cubre irregularidades en padrón, transparencia partidista, financiamiento ordinario y obligaciones estatutarias",
+       "Juicio de Inconformidad (JIN) porque involucra resultados electorales"],
+    c:1,
+    ex:"El POS busca investigar y castigar faltas generales sin la premura de los tiempos de campaña: irregularidades en el padrón, fallas estatutarias, omisiones en informes anuales, incumplimiento de obligaciones ordinarias. Su instrucción y resolución se dan en sede administrativa del INE. No tiene plazos sumarios como el PES. El JIN es para resultados electorales, no aplica.",
+    f:"LGIPE (2024), arts. 459-469; Reglamento de Quejas y Denuncias del INE (2017)" },
+
+  { sa:"1.4", sal:"Quejas y denuncias", area:"Jurídico-electoral", dif:"alta",
+    p:null, pt:null,
+    q:"¿Qué son las medidas cautelares en el PES y quién las decreta?",
+    o:["Son sanciones definitivas que aplica directamente el Vocal Secretario en el lugar de los hechos",
+       "Son medidas provisionales para detener una conducta presuntamente infractora y evitar daños irreparables a la equidad del proceso electoral (suspensión de propaganda, retiro de espectaculares, cese de transmisiones, medidas de protección a víctimas en VPMRG); las decreta la Comisión de Quejas y Denuncias del INE a propuesta de la UTCE; los órganos desconcentrados no las decretan, pero participan ejecutándolas en su ámbito territorial",
+       "Las decreta unilateralmente la Sala Regional Especializada del TEPJF sin intervención del INE"],
+    c:1,
+    ex:"Las medidas cautelares son provisionales y buscan preservar la equidad mientras se sustancia el procedimiento. Su requisito: peligro en la demora y apariencia del buen derecho. La Comisión de Quejas y Denuncias del INE (órgano del Consejo General) es quien las decreta, a propuesta de la UTCE. Su decisión puede ser impugnada. Los Vocales Secretarios no las decretan, pero las ejecutan en su territorio cuando son comisionados.",
+    f:"Reglamento de Quejas y Denuncias del INE (2017), arts. 38-42" },
+
+  /* ══════════════════════════════════════════
+     1.5  VIOLENCIA POLÍTICA DE GÉNERO (2)
+  ══════════════════════════════════════════ */
+  { sa:"1.5", sal:"Violencia política contra las mujeres", area:"Jurídico-electoral", dif:"alta",
+    p:null, pt:null,
+    q:"Conforme a la legislación electoral vigente y al Protocolo del INE en materia de VPMRG, ¿cuáles son los elementos que distinguen a la violencia política contra las mujeres en razón de género respecto de otros tipos de violencia política?",
+    o:["No existe distinción jurídica; es violencia política como cualquier otra",
+       "La VPMRG se distingue por: (1) tener como sujeto pasivo a una mujer, (2) basarse en elementos de género (estereotipos, roles, percepciones diferenciadas), (3) tener por objeto o resultado limitar, anular o menoscabar el ejercicio efectivo de derechos político-electorales de las mujeres, incluido el acceso al pleno ejercicio de las atribuciones inherentes a su cargo; puede manifestarse en el ámbito político, público, partidario, comunitario, familiar o cualquier otro",
+       "Sólo es VPMRG la que ocurre dentro de los partidos políticos"],
+    c:1,
+    ex:"La definición legal (LGIPE arts. 3 y 442 Bis, LGAMVLV art. 20 Bis, entre otras) exige los tres elementos: sujeto pasivo mujer, fundamento en género (estereotipos, roles, prejuicios) y propósito/resultado de menoscabar derechos. La identificación correcta es crucial para que las autoridades activen el protocolo de atención con perspectiva de género (no revictimización, confidencialidad, medidas de protección) y para diferenciarlo del trato sancionatorio ordinario.",
+    f:"LGIPE (2024), arts. 3 y 442 Bis; LGAMVLV; Protocolo del INE de atención de VPMRG" },
+
+  { sa:"1.5", sal:"Violencia política contra las mujeres", area:"Jurídico-electoral", dif:"muy-alta",
+    p:"Una mujer regidora electa denuncia ante la Junta Distrital que, desde su toma de protesta, miembros varones del Cabildo le impiden sistemáticamente el uso de la voz, le ocultan información para la toma de decisiones y le asignan únicamente comisiones secundarias por considerar que 'es una mujer y no debe meterse en temas presupuestales'.",
+    pt:"VPMRG — ejercicio del cargo",
+    q:"¿Es competencia del INE conocer estos hechos y qué debe hacer el Vocal Secretario?",
+    o:["No es competencia del INE porque se trata de hechos posteriores a la elección; debe remitir la denuncia al gobierno municipal",
+       "Sí puede ser competencia electoral cuando los hechos limitan el ejercicio efectivo del cargo de elección popular (la VPMRG no se agota en la etapa de campañas, comprende también el ejercicio del cargo); el Vocal Secretario recibe la denuncia con perspectiva de género, garantiza confidencialidad y no revictimización, la remite a la UTCE para que se determine la vía (PES si afecta proceso o ejercicio inmediato; orientación a otras instancias si la conducta excede el ámbito electoral); puede coexistir con denuncias penales y administrativas",
+       "Se rechaza la denuncia por considerar que las conductas son meramente políticas"],
+    c:1,
+    ex:"La reforma de 2020 ampliada por jurisprudencia del TEPJF estableció que la VPMRG comprende todo el ciclo político: precampaña, campaña, jornada y ejercicio del cargo de elección popular. Conductas que impiden el ejercicio efectivo del cargo (negar voz, ocultar información, asignar tareas discriminatorias por género) pueden ser VPMRG y son materia electoral. El Vocal Secretario recibe con protocolo, remite con urgencia y orienta sobre la concurrencia de vías (penal, administrativa, electoral, derechos humanos).",
+    f:"LGIPE (2024), arts. 3 y 442 Bis; jurisprudencia del TEPJF; Protocolo del INE" },
+
+  /* ══════════════════════════════════════════
+     1.6  DELITOS ELECTORALES (1)
+  ══════════════════════════════════════════ */
+  { sa:"1.6", sal:"Delitos electorales", area:"Jurídico-electoral", dif:"muy-alta",
+    p:"Durante la jornada electoral, un funcionario de casilla acude a la Junta Distrital y denuncia que un representante de partido le ofreció dinero para que alterara los resultados del acta de escrutinio y cómputo de su casilla a favor de cierta candidatura. Aporta el nombre del representante y un mensaje de texto que respalda su dicho.",
+    pt:"Delito electoral — alteración de resultados",
+    q:"¿Cuál es la actuación correcta del Vocal Secretario respecto de esta denuncia?",
+    o:["Resolver en el acto que el representante de partido cometió delito y aplicar sanción",
+       "Levantar acta circunstanciada de la comparecencia del funcionario describiendo objetivamente su dicho y la prueba aportada (sin calificar la conducta como delito); orientarlo para presentar denuncia ante la Fiscalía Especializada en Delitos Electorales (FEDE) de la FGR, pues los delitos electorales son competencia penal federal; en paralelo, recibir queja administrativa para remitirla a la UTCE, pues la conducta puede constituir simultáneamente infracción electoral; preservar el mensaje como evidencia",
+       "Negarse a recibir cualquier denuncia y orientar al funcionario a esperar el cómputo distrital"],
+    c:1,
+    ex:"La oferta de dinero para alterar resultados puede ser, simultáneamente: (1) delito electoral (Ley General en Materia de Delitos Electorales, competencia de la FEDE de la FGR), (2) infracción administrativa electoral (Reglamento de Quejas, competencia del INE, sancionable mediante PES dado el momento). El Vocal Secretario: (a) ejerce Oficialía Electoral levantando acta de la comparecencia con descripción objetiva, (b) orienta sobre la vía penal ante la FEDE, (c) recibe la queja administrativa para la UTCE, (d) preserva el mensaje. Nunca califica jurídicamente la conducta ni resuelve sanciones.",
+    f:"Ley General en Materia de Delitos Electorales (2021); LGIPE (2024); Reglamento de Oficialía Electoral" },
+
+  /* ══════════════════════════════════════════
+     2.1  SESIONES Y ACUERDOS (4)
+  ══════════════════════════════════════════ */
+  { sa:"2.1", sal:"Juntas ejecutivas y sesiones", area:"Órganos desconcentrados permanentes", dif:"alta",
+    p:null, pt:null,
+    q:"Conforme al Reglamento de Sesiones de las Juntas Locales y Distritales, ¿cuál es la diferencia entre una sesión ordinaria y una extraordinaria en cuanto a su convocatoria?",
+    o:["No hay diferencia; las dos se convocan con el mismo procedimiento y plazo",
+       "Las sesiones ordinarias se realizan conforme al calendario aprobado por la propia Junta (típicamente mensuales) y se convocan con la anticipación prevista en el Reglamento; las extraordinarias se convocan en cualquier momento por el Vocal Ejecutivo cuando exista asunto que lo amerite, con una anticipación menor (incluso de horas) según la urgencia, y deben tratar exclusivamente los puntos que motivaron la convocatoria",
+       "Las extraordinarias sólo pueden celebrarse durante el proceso electoral"],
+    c:1,
+    ex:"El Reglamento de Sesiones distingue: (a) Ordinarias, con calendario prestablecido (generalmente mensuales) y plazo de convocatoria ordinario (48 horas); (b) Extraordinarias, convocadas por el Vocal Ejecutivo cuando hay urgencia, con plazo menor según las circunstancias, y temario acotado a los puntos urgentes. El Vocal Secretario es responsable de elaborar la convocatoria y verificar el cumplimiento de plazos para garantizar validez de los acuerdos.",
+    f:"Reglamento de Sesiones para las JLDE y JDE del IFE (2008), arts. 4-7" },
+
+  { sa:"2.1", sal:"Juntas ejecutivas y sesiones", area:"Órganos desconcentrados permanentes", dif:"alta",
+    p:null, pt:null,
+    q:"Si durante una sesión de Junta Ejecutiva se requiere votar un acuerdo y se produce un empate, ¿qué procedimiento se aplica conforme al Reglamento?",
+    o:["Se considera rechazado automáticamente cualquier acuerdo empatado",
+       "El Vocal Ejecutivo (quien preside la sesión) tiene voto de calidad para resolver el empate; ejercido el voto de calidad, el acuerdo queda aprobado o rechazado conforme al sentido del voto de calidad; el Vocal Secretario asienta en el acta el resultado de la votación, la circunstancia del empate y el ejercicio del voto de calidad",
+       "Se difiere indefinidamente la votación hasta que se logre mayoría"],
+    c:1,
+    ex:"El voto de calidad del presidente de un órgano colegiado es una técnica común en derecho administrativo: ante empate, quien preside ejerce un segundo voto que define la decisión. En las Juntas Ejecutivas del INE, esta función recae en el Vocal Ejecutivo. El Vocal Secretario debe documentar minuciosamente en el acta: el empate, el ejercicio del voto de calidad, el sentido y el resultado final del acuerdo. Esta precisión es vital ante eventuales impugnaciones.",
+    f:"Reglamento de Sesiones para las JLDE y JDE del IFE (2008)" },
+
+  { sa:"2.1", sal:"Juntas ejecutivas y sesiones", area:"Órganos desconcentrados permanentes", dif:"muy-alta",
+    p:"En una sesión ordinaria, después de aprobada el acta de la sesión anterior, un integrante de la Junta solicita reabrir un acuerdo ya tomado y registrado en el libro de acuerdos hace seis meses, argumentando que ha cambiado el contexto y debe modificarse.",
+    pt:"Revocación de acuerdos previos — procedencia",
+    q:"¿Es posible revocar o modificar un acuerdo ya tomado y cómo debe procederse?",
+    o:["No es posible bajo ninguna circunstancia; los acuerdos son inmutables una vez registrados",
+       "Sí es posible, pero requiere procedimiento expreso: incluir el punto en el orden del día de una sesión, fundamentar la modificación o revocación (cambio de circunstancias, nueva normativa, error material), someter a votación con la mayoría requerida y, en su caso, aprobar el acuerdo modificatorio; el Vocal Secretario debe registrar el nuevo acuerdo en el libro de acuerdos y anotar la referencia cruzada con el acuerdo modificado o revocado; deben respetarse derechos adquiridos por terceros",
+       "Sí es posible mediante simple manifestación verbal en sesión, sin necesidad de votación formal"],
+    c:1,
+    ex:"Los acuerdos colegiados se modifican o revocan mediante otro acuerdo colegiado de igual o mayor jerarquía, siguiendo el procedimiento formal: inclusión en orden del día, debate, votación con la mayoría requerida y registro en el libro de acuerdos con referencia cruzada al acuerdo modificado. Hay limitaciones: no pueden afectarse derechos adquiridos de terceros de buena fe ni revocarse para efectos retroactivos en perjuicio. El Vocal Secretario debe asegurar la trazabilidad documental.",
+    f:"Reglamento de Sesiones para las JLDE y JDE del IFE (2008); principios generales de derecho administrativo" },
+
+  { sa:"2.1", sal:"Juntas ejecutivas y sesiones", area:"Órganos desconcentrados permanentes", dif:"alta",
+    p:null, pt:null,
+    q:"¿Cuál es la diferencia entre el 'acta de sesión' y la 'minuta de sesión' que puede llevar el Vocal Secretario?",
+    o:["Son términos equivalentes; cualquiera vale como documento oficial de la sesión",
+       "El acta de sesión es el documento oficial que da fe del desarrollo íntegro de la sesión: asistencia, instalación, deliberación, acuerdos, votaciones, incidentes y conclusión; es firmada por los integrantes y produce efectos jurídicos plenos. La minuta es un documento de trabajo, resumen o borrador para uso interno (preparación del acta), que no tiene los mismos efectos jurídicos y normalmente no se firma ni se publica",
+       "La minuta es la versión final firmada y el acta es el borrador inicial"],
+    c:1,
+    ex:"Esta distinción es importante para el manejo documental. El acta es el documento auténtico, formal, firmado y archivado; sirve como prueba documental ante impugnaciones o auditorías. La minuta es instrumento de trabajo (borradores, resúmenes para uso interno). El Vocal Secretario debe utilizar correctamente ambos términos y nunca confundirlos al integrar expedientes o responder solicitudes de transparencia.",
+    f:"Reglamento de Sesiones para las JLDE y JDE del IFE (2008); prácticas institucionales" },
+
+  /* ══════════════════════════════════════════
+     3.1  RECURSOS FINANCIEROS (4)
+  ══════════════════════════════════════════ */
+  { sa:"3.1", sal:"Recursos financieros y materiales", area:"Gestión administrativa electoral del INE", dif:"alta",
+    p:null, pt:null,
+    q:"¿Qué es el 'fondo revolvente' o 'caja chica' en una Junta Distrital y qué reglas básicas establece el Manual de Normas Administrativas para su operación?",
+    o:["Es una cuenta sin control alguno que el Vocal Ejecutivo puede usar libremente",
+       "Es un monto pequeño que se mantiene en la Junta para gastos menores, urgentes e inaplazables, sujeto a comprobación periódica; se opera bajo principios de uso eficiente, justificación de cada erogación, comprobantes fiscales válidos, prohibición de fraccionamiento para evadir montos máximos, reposición conforme a procedimiento y rendición de cuentas; la responsabilidad recae en el servidor que tenga el resguardo",
+       "Es una asignación destinada exclusivamente al pago de servicios personales del Vocal Ejecutivo"],
+    c:1,
+    ex:"El fondo revolvente o caja chica es un instrumento operativo para gastos menores que no admiten el procedimiento ordinario por su urgencia. Las reglas: monto autorizado y limitado, uso sólo para gastos menores justificados, comprobantes fiscales por cada erogación, no fraccionar gastos para evadir umbrales, comprobación periódica para reposición, custodia bajo resguardo individual. El Vocal Secretario, en su rol administrativo en la Junta, vigila el cumplimiento.",
+    f:"Manual de Normas Administrativas del INE (2017), sección de fondo revolvente" },
+
+  { sa:"3.1", sal:"Recursos financieros y materiales", area:"Gestión administrativa electoral del INE", dif:"alta",
+    p:null, pt:null,
+    q:"En materia de adquisiciones del INE, ¿cuáles son las tres modalidades principales de procedimiento de contratación previstas en la normativa aplicable y cómo se determina cuál corresponde?",
+    o:["Sólo existe una modalidad: la adjudicación directa al proveedor que elija el Vocal Ejecutivo",
+       "Las tres modalidades son: licitación pública (regla general; ofrece la mayor competencia y transparencia), invitación a cuando menos tres personas o invitación restringida (modalidad intermedia, para montos medios o casos específicos) y adjudicación directa (modalidad excepcional para montos menores o supuestos justificados por la ley); la selección depende de los montos máximos establecidos en el presupuesto del año y los supuestos específicos previstos en la Ley de Adquisiciones aplicable",
+       "Las tres modalidades son: pago en efectivo, transferencia electrónica y cheque"],
+    c:1,
+    ex:"La Ley de Adquisiciones, Arrendamientos y Servicios del Sector Público (LAASSP), aplicable al INE, prevé tres modalidades: (a) licitación pública (regla general, máxima competencia), (b) invitación a cuando menos tres personas (procedimiento intermedio), (c) adjudicación directa (excepcional). La elección depende de montos máximos (que se publican anualmente en el presupuesto de egresos) y supuestos específicos legalmente justificados. Las Juntas deben sujetarse a estos procedimientos.",
+    f:"LAASSP; Manual de Normas Administrativas del INE (2017)" },
+
+  { sa:"3.1", sal:"Recursos financieros y materiales", area:"Gestión administrativa electoral del INE", dif:"muy-alta",
+    p:"Al finalizar el ejercicio fiscal, la Junta Distrital tiene un remanente de recursos no ejercidos en varias partidas. El Vocal Ejecutivo pregunta al Vocal Secretario qué procede.",
+    pt:"Cierre de ejercicio — recursos no ejercidos",
+    q:"¿Cuál es el procedimiento correcto conforme al Manual de Normas Administrativas?",
+    o:["Ejercer rápidamente los recursos en cualquier gasto para no perderlos antes de fin de año",
+       "Conforme a las normas administrativas del INE y los principios de gestión pública: los recursos no ejercidos al cierre del ejercicio deben reintegrarse al área central conforme al procedimiento de cierre del ejercicio fiscal; está prohibido el ejercicio acelerado o injustificado (gasto inercial) sólo para evitar el reintegro; la Junta debe documentar las causas del no ejercicio y elaborar el informe de cierre; el área central determina el destino final conforme a la normativa presupuestaria",
+       "Repartir los remanentes como bono entre el personal de la Junta"],
+    c:1,
+    ex:"El principio de anualidad y disciplina presupuestaria obliga a reintegrar los recursos no ejercidos al término del ejercicio. El gasto acelerado e injustificado (gasto inercial de fin de año) es una práctica observada por auditorías y puede constituir irregularidad administrativa. El procedimiento correcto: documentar el no ejercicio, elaborar informe de cierre, reintegrar conforme a las instrucciones del área central, y registrar las causas para mejorar la planeación del siguiente ejercicio.",
+    f:"Manual de Normas Administrativas del INE (2017); LFPRH y normativa presupuestaria" },
+
+  { sa:"3.1", sal:"Recursos financieros y materiales", area:"Gestión administrativa electoral del INE", dif:"alta",
+    p:null, pt:null,
+    q:"¿Qué es el 'inventario de bienes muebles' de la Junta Distrital y con qué periodicidad debe levantarse físicamente conforme a las prácticas administrativas del INE?",
+    o:["Es un documento sólo informativo que se levanta una vez cada cinco años",
+       "Es el registro patrimonial de los bienes muebles asignados a la Junta (equipo de cómputo, mobiliario, vehículos, equipo electoral) que debe mantenerse permanentemente actualizado en el sistema institucional; debe levantarse físicamente al menos una vez al año (inventario anual) y conciliarse con los resguardos individuales y los registros contables; al cierre del ejercicio y ante cambios de titularidad de servidores responsables debe practicarse inventario específico de los bienes bajo su resguardo",
+       "Sólo se levanta cuando se sospecha de pérdida o robo"],
+    c:1,
+    ex:"El inventario es un instrumento de control patrimonial. Las prácticas administrativas del INE requieren: actualización permanente en el sistema, inventario físico anual (conciliación con registros contables), inventarios específicos al cambio de titulares (entrega-recepción), y conciliación con los resguardos individuales. La omisión puede generar responsabilidades administrativas por extravío o no localización de bienes. El Vocal Secretario suele coordinar la realización del inventario.",
+    f:"Manual de Normas Administrativas del INE (2017)" },
+
+  /* ══════════════════════════════════════════
+     3.2  RECURSOS HUMANOS / SPEN (3)
+  ══════════════════════════════════════════ */
+  { sa:"3.2", sal:"Recursos humanos y SPEN", area:"Gestión administrativa electoral del INE", dif:"alta",
+    p:null, pt:null,
+    q:"¿Qué diferencia existe entre el personal del Servicio Profesional Electoral Nacional (SPEN) y el personal de la Rama Administrativa del INE?",
+    o:["Son lo mismo; todos los servidores del INE forman parte del SPEN automáticamente",
+       "El SPEN integra a los servidores públicos del INE que realizan funciones electorales sustantivas (vocales, jefes de oficina de seguimiento, técnicos de campo, etc.) y se rige por el Estatuto del SPEN, con sistema de carrera (ingreso por concurso, evaluación del desempeño, capacitación, promoción, permanencia); la Rama Administrativa la integran servidores con funciones administrativas, contables, jurídicas, informáticas, etc., con regulación laboral propia distinta",
+       "El SPEN está integrado por los partidos políticos, no por personal del INE"],
+    c:1,
+    ex:"El INE tiene dos grandes ramas de personal: (1) SPEN: servidores con funciones electorales sustantivas, regulados por el Estatuto del SPEN, con sistema de carrera (ingreso, capacitación, evaluación, promoción); su estabilidad y desarrollo se rigen por reglas específicas. (2) Rama Administrativa: servidores con funciones de apoyo (administrativas, financieras, jurídicas, etc.), con regulación distinta. Los Vocales (Ejecutivo, Secretario, Capacitación, Organización, Registro) son SPEN.",
+    f:"LGIPE (2024), arts. 201-208; Estatuto del SPEN (2024)" },
+
+  { sa:"3.2", sal:"Recursos humanos y SPEN", area:"Gestión administrativa electoral del INE", dif:"alta",
+    p:null, pt:null,
+    q:"¿Cuáles son las fases del proceso de ingreso al SPEN mediante concurso público conforme al Estatuto?",
+    o:["Sólo una entrevista personal con el Consejero Presidente del INE",
+       "Convocatoria pública, registro e inscripción de aspirantes, evaluaciones (típicamente examen de conocimientos, examen psicométrico, ensayo, valoración curricular, entrevista por panel y/o evaluaciones específicas según el cargo), publicación de resultados con criterios objetivos, designación de quienes alcancen las mejores calificaciones para las plazas disponibles, e incorporación con un periodo inicial de capacitación o adscripción según el cargo",
+       "Recomendación directa del Vocal Ejecutivo correspondiente, sin necesidad de evaluación pública"],
+    c:1,
+    ex:"El ingreso al SPEN se rige por principios de profesionalismo, mérito, equidad e igualdad de oportunidades. El procedimiento típico incluye: convocatoria pública con requisitos, registro de aspirantes, evaluaciones objetivas (conocimientos, psicométricas, ensayos, paneles, entrevistas), publicación transparente de resultados, designación por orden de mérito y, según el cargo, incorporación con capacitación inicial. La discrecionalidad o el favoritismo son contrarios al Estatuto.",
+    f:"Estatuto del SPEN (2024), arts. sobre ingreso" },
+
+  { sa:"3.2", sal:"Recursos humanos y SPEN", area:"Gestión administrativa electoral del INE", dif:"muy-alta",
+    p:"Un Vocal Secretario Distrital recibe el ofrecimiento informal de un partido político para apoyarlo financieramente en su carrera profesional a cambio de información sobre el desarrollo del proceso electoral en el distrito.",
+    pt:"Ética e imparcialidad — caso de presunta corrupción",
+    q:"¿Cuál es la actuación correcta del Vocal Secretario?",
+    o:["Aceptar discretamente la oferta si no se entera el resto del personal",
+       "Rechazar de plano el ofrecimiento, dejar constancia documental del hecho, informar de inmediato al Vocal Ejecutivo y, en su caso, a la Dirección Ejecutiva del SPEN y al Órgano Interno de Control del INE; los principios de imparcialidad, independencia y probidad del Estatuto del SPEN y la Ley General de Responsabilidades Administrativas exigen rechazar y denunciar cualquier ofrecimiento que comprometa la imparcialidad o pueda configurar un acto de corrupción; el incumplimiento puede generar responsabilidades graves",
+       "Consultar con el partido qué tipo específico de información esperan a cambio del apoyo"],
+    c:1,
+    ex:"Los principios rectores del INE (certeza, legalidad, independencia, imparcialidad, máxima publicidad, objetividad) y los deberes del SPEN (lealtad, imparcialidad, probidad) imponen rechazo absoluto a cualquier oferta que comprometa la independencia. La Ley General de Responsabilidades Administrativas tipifica conductas como cohecho, conflicto de interés y tráfico de influencias. La actuación correcta: rechazo expreso, constancia documental, informe a superior jerárquico, denuncia al OIC. Omitir denunciar también puede generar responsabilidad.",
+    f:"Estatuto del SPEN (2024); Ley General de Responsabilidades Administrativas; Código de Ética del INE" },
+
+  /* ══════════════════════════════════════════
+     4.1  CONSEJOS LOCALES Y DISTRITALES (4)
+  ══════════════════════════════════════════ */
+  { sa:"4.1", sal:"Consejos locales y distritales", area:"Proceso electoral", dif:"alta",
+    p:null, pt:null,
+    q:"¿Cómo se integra un Consejo Distrital del INE conforme a la LGIPE?",
+    o:["Únicamente por el Vocal Ejecutivo, sin presencia de partidos políticos",
+       "Por seis Consejeros Electorales (con derecho a voz y voto), un Consejero Presidente que es el Vocal Ejecutivo de la Junta Distrital (con voto de calidad), un Secretario que es el Vocal Secretario de la Junta (con voz pero sin voto), los demás Vocales de la Junta como integrantes con voz y los representantes de los partidos políticos y candidatos independientes acreditados (con voz pero sin voto)",
+       "Por veinte ciudadanos elegidos por sorteo, sin participación de personal del INE"],
+    c:1,
+    ex:"El Consejo Distrital se integra por: Consejero Presidente (Vocal Ejecutivo, con voto de calidad), seis Consejeros Electorales con voz y voto, el Secretario (Vocal Secretario, sólo voz), los demás Vocales (Organización, Capacitación, Registro Federal) con voz, y representantes acreditados de los partidos políticos y candidatos independientes (voz sin voto). Su instalación es temporal: opera durante el proceso electoral.",
+    f:"LGIPE (2024), arts. 76 y 79" },
+
+  { sa:"4.1", sal:"Consejos locales y distritales", area:"Proceso electoral", dif:"alta",
+    p:null, pt:null,
+    q:"¿Qué función específica le corresponde al Vocal Secretario como Secretario del Consejo Distrital durante el cómputo distrital?",
+    o:["Votar los acuerdos del Consejo en igualdad con los Consejeros Electorales",
+       "Dar fe del desarrollo del cómputo: levantar el acta circunstanciada de la sesión de cómputo, asentar los resultados de cada acta de casilla, registrar los incidentes y protestas presentadas por representantes de partido, supervisar el llenado de las actas de cómputo distrital, controlar la cadena de custodia de los paquetes electorales y resguardar los expedientes; emite la constancia de mayoría y validez junto con el Consejero Presidente",
+       "Únicamente leer las actas de casilla en voz alta sin levantar registro de los acontecimientos"],
+    c:1,
+    ex:"El Vocal Secretario en el cómputo distrital tiene una función central de fe pública y operativa: levanta el acta circunstanciada de la sesión de cómputo (con incidentes y protestas), registra los resultados conforme se computan las actas, supervisa la cadena de custodia de los paquetes electorales, da fe de aperturas (cuando proceden) y resguarda los expedientes. Junto con el Consejero Presidente, suscribe la constancia de mayoría y validez.",
+    f:"LGIPE (2024), arts. 309-313" },
+
+  { sa:"4.1", sal:"Consejos locales y distritales", area:"Proceso electoral", dif:"muy-alta",
+    p:"Durante la sesión permanente de la jornada electoral, un Consejero Electoral del Consejo Distrital se opone a un acuerdo del Consejo y exige que se asiente en el acta su voto particular fundamentado. El Consejero Presidente quiere que se omita el voto particular del acta para 'agilizar la sesión'.",
+    pt:"Voto particular — derecho del Consejero",
+    q:"¿Qué debe hacer el Vocal Secretario?",
+    o:["Apoyar al Consejero Presidente y omitir el voto particular del acta para agilizar",
+       "Es derecho de los Consejeros Electorales emitir voto particular y exigir su asentamiento en el acta; el Vocal Secretario, como Secretario del Consejo y fedatario, debe registrar el voto particular (sentido del voto, motivos esenciales) en el acta de la sesión y, en su caso, recibir el escrito de voto particular para ser anexado; ignorarlo podría viciar el acta y la decisión, además de violar derechos de los Consejeros",
+       "Resolver por sí mismo si procede o no el voto particular"],
+    c:1,
+    ex:"El voto particular es un derecho fundamental de los integrantes de órganos colegiados: permite dejar constancia de disenso fundamentado. El Vocal Secretario, como Secretario del Consejo, debe registrarlo en el acta (al menos el sentido y motivos esenciales) y, si el Consejero presenta escrito separado, anexarlo al expediente. Omitir un voto particular del acta puede ser causa de impugnación. El Consejero Presidente no tiene facultad para impedirlo.",
+    f:"LGIPE (2024); Reglamento de Sesiones; principios del derecho administrativo colegiado" },
+
+  { sa:"4.1", sal:"Consejos locales y distritales", area:"Proceso electoral", dif:"alta",
+    p:null, pt:null,
+    q:"¿Quién designa a los Consejeros Electorales de los Consejos Locales y Distritales y cuál es el principio que rige su selección?",
+    o:["Los designan los partidos políticos en proporción a su fuerza electoral",
+       "El Consejo General del INE designa a los Consejeros Electorales de los Consejos Locales y Distritales conforme a procedimientos de selección que privilegian principios de imparcialidad, prestigio profesional y ciudadano, idoneidad para el cargo, equidad de género y, en su caso, conocimiento de la materia electoral; se trata de ciudadanos ajenos a la estructura administrativa permanente del INE, designados específicamente para el proceso electoral",
+       "Los designa el Vocal Ejecutivo de cada Junta libremente"],
+    c:1,
+    ex:"El Consejo General del INE es el órgano competente para designar a los Consejeros Electorales (titulares y suplentes) de los Consejos Locales y Distritales. La selección se rige por principios constitucionales y reglamentarios: idoneidad, imparcialidad, prestigio, paridad de género, no militancia partidista, etc. Son ciudadanos comisionados durante el proceso electoral, ajenos a la estructura permanente. Esta diferencia con las Juntas (que son personal permanente del SPEN) es clave.",
+    f:"LGIPE (2024), arts. 65 y 76; lineamientos de designación del INE" },
+
+  /* ══════════════════════════════════════════
+     4.2  PROCEDIMIENTOS Y CANDIDATURAS (7)
+  ══════════════════════════════════════════ */
+  { sa:"4.2", sal:"Procedimientos y candidaturas", area:"Proceso electoral", dif:"alta",
+    p:null, pt:null,
+    q:"¿Qué es la 'casilla especial' y cuál es su función dentro del proceso electoral federal?",
+    o:["Es una casilla destinada exclusivamente a votantes con discapacidad motora, sin otros usuarios",
+       "Es una casilla instalada para que los electores en tránsito que se encuentren fuera de la sección electoral correspondiente a su domicilio puedan ejercer su derecho al voto el día de la jornada; tiene reglas específicas: número limitado de boletas, restricciones según el tipo de elección que puede votarse según el lugar donde el elector esté en tránsito, requisitos de identificación; las instala el Consejo Distrital correspondiente",
+       "Es una casilla que opera durante una semana antes de la jornada electoral para anticipar el voto"],
+    c:1,
+    ex:"La casilla especial (art. 258 LGIPE) atiende a los electores en tránsito que el día de la jornada no se encuentran en la sección electoral de su domicilio. Tiene reglas particulares: número limitado de boletas (típicamente 750), el elector puede votar sólo por los cargos que correspondan al lugar donde está (si está en otra entidad, sólo Presidente o Senador por listas, no diputado local, etc.). Las instala el Consejo Distrital y son objeto de control específico.",
+    f:"LGIPE (2024), art. 258" },
+
+  { sa:"4.2", sal:"Procedimientos y candidaturas", area:"Proceso electoral", dif:"alta",
+    p:null, pt:null,
+    q:"¿Qué órgano del INE realiza el cómputo de la elección de Presidente de la República y cuándo se ejecuta?",
+    o:["Lo realiza el Consejo Distrital al día siguiente de la jornada electoral",
+       "El Consejo General del INE no realiza el cómputo presidencial; conforme a la Constitución y a la LGIPE, los cómputos distritales suman los votos presidenciales en cada distrito; el cómputo nacional es realizado por la Sala Superior del TEPJF, que con base en los cómputos distritales realiza el cómputo final y declara la validez de la elección, así como al Presidente Electo, conforme a la reforma de competencia jurisdiccional",
+       "Lo realizan los partidos políticos en sus oficinas centrales sin intervención del INE"],
+    c:1,
+    ex:"Tras la reforma constitucional, el cómputo final y la declaración de validez de la elección de Presidente de la República son competencia de la Sala Superior del TEPJF, no del INE. Los Consejos Distritales del INE realizan los cómputos distritales (sumando los votos por casilla en cada distrito) y remiten los resultados a la Sala Superior. Ésta integra el cómputo nacional, califica la elección y declara Presidente Electo. El Vocal Secretario distrital interviene en el cómputo distrital de la elección presidencial.",
+    f:"CPEUM (2025), art. 99; LGIPE (2024); jurisprudencia y normativa del TEPJF" },
+
+  { sa:"4.2", sal:"Procedimientos y candidaturas", area:"Proceso electoral", dif:"muy-alta",
+    p:"Una candidata independiente solicita al Consejo Distrital el registro de su candidatura a diputada federal por el distrito X. Su solicitud cumple con los requisitos de respaldo ciudadano y demás formalidades, pero el Vocal Secretario detecta que en uno de los documentos exhibidos hay una omisión menor de fecha.",
+    pt:"Registro de candidatura — requerimiento de subsanación",
+    q:"¿Qué debe hacer el Vocal Secretario al integrar el expediente?",
+    o:["Rechazar el registro de plano por la omisión",
+       "Conforme a los lineamientos del INE, ante omisiones formales subsanables, debe formularse requerimiento a la solicitante para que en el plazo que la normativa señale subsane la deficiencia (con apercibimiento); si subsana, se da curso; si no subsana, el Consejo decide sobre la procedencia con los elementos del expediente; no procede rechazar de plano omisiones susceptibles de subsanación; el Vocal Secretario integra el expediente y emite el proyecto de acuerdo para el Consejo",
+       "Subsanar él mismo el documento incorporando la fecha que considere correcta"],
+    c:1,
+    ex:"El principio pro persona y de máxima inclusión político-electoral exige que las autoridades, ante omisiones subsanables, requieran al solicitante en lugar de desechar de plano. El procedimiento: identificar la omisión, requerir formalmente con plazo y apercibimiento, recibir lo subsanado y, en su caso, integrar al expediente; si la persona no subsana, el Consejo resuelve. Subsanar de oficio sería excederse de facultades. El Vocal Secretario integra el expediente y elabora proyectos para el Consejo, que es quien decide.",
+    f:"LGIPE (2024); lineamientos del INE sobre registro de candidaturas" },
+
+  { sa:"4.2", sal:"Procedimientos y candidaturas", area:"Proceso electoral", dif:"alta",
+    p:null, pt:null,
+    q:"¿Qué es el 'recuento total' de votos en el cómputo distrital y bajo qué supuestos procede conforme a la LGIPE?",
+    o:["Es un procedimiento facultativo que el Consejo puede ordenar sin causa justificada",
+       "Es la apertura y nuevo escrutinio y cómputo de la totalidad de los paquetes de las casillas instaladas en un distrito; procede cuando la diferencia entre el primer y el segundo lugar es igual o menor a un punto porcentual del total de votos válidos, siempre que medie petición expresa del representante del partido o candidato que quedó en segundo lugar; también puede proceder por causal específica establecida en la ley",
+       "Es un procedimiento que sólo puede ordenar el TEPJF después de la jornada"],
+    c:1,
+    ex:"El recuento total (art. 311 LGIPE) procede ante el Consejo Distrital cuando: (a) la diferencia entre primero y segundo lugar es igual o menor a un punto porcentual del total de votos válidos, y (b) media petición del representante del partido o candidato que quedó en segundo lugar. El recuento puede ser parcial (paquete por paquete con indicios) o total (todos los paquetes). El Vocal Secretario da fe del proceso, levanta acta circunstanciada y registra los nuevos resultados.",
+    f:"LGIPE (2024), art. 311" },
+
+  { sa:"4.2", sal:"Procedimientos y candidaturas", area:"Proceso electoral", dif:"alta",
+    p:null, pt:null,
+    q:"¿Cuál es el rol de los observadores electorales y los visitantes extranjeros en una jornada electoral, y cómo deben relacionarse con el Vocal Secretario en la Junta Distrital?",
+    o:["Pueden intervenir activamente en las decisiones del Consejo Distrital y emitir voto",
+       "Los observadores electorales nacionales son ciudadanos acreditados por el INE para vigilar pasivamente el desarrollo del proceso (no intervienen, no emiten opiniones públicas durante la jornada); los visitantes extranjeros son personas extranjeras invitadas por el INE; ambos tienen prohibido sustituir a los funcionarios electorales o intervenir en las decisiones; el Vocal Secretario debe facilitar el ejercicio de sus actividades de observación (acceso a casillas, sesiones públicas) sin obstruir y registrar incidentes",
+       "Los observadores tienen facultades equivalentes a los funcionarios de casilla y deben recibir las boletas"],
+    c:1,
+    ex:"Los observadores electorales (LGIPE arts. 217-218) son ciudadanos acreditados por el INE para observar pasivamente. Los visitantes extranjeros son personas extranjeras invitadas. Ninguno puede intervenir, sustituir funcionarios, hacer proselitismo, declarar públicamente sobre la jornada hasta su conclusión ni emitir resultados. El Vocal Secretario facilita su acceso a actos públicos (casillas, sesiones del Consejo) sin obstruir y registra cualquier incidente relevante.",
+    f:"LGIPE (2024), arts. 217-218" },
+
+  { sa:"4.2", sal:"Procedimientos y candidaturas", area:"Proceso electoral", dif:"muy-alta",
+    p:"Una alianza de partidos políticos presenta convenio de coalición ante el Consejo Local. El convenio especifica que un determinado distrito le corresponde al partido X y otro al partido Y. Sin embargo, en el documento se omite la distribución de prerrogativas (financiamiento y tiempos de radio y TV).",
+    pt:"Convenio de coalición — verificación de requisitos",
+    q:"¿Cómo debe proceder el Vocal Secretario y el Consejo Local?",
+    o:["Aprobar la coalición sin verificar las omisiones; el Consejo General lo revisará después",
+       "El Vocal Secretario debe integrar el expediente del convenio y, antes de someterlo al Consejo, verificar el cumplimiento de los requisitos legales (incluyendo la distribución de prerrogativas, que es elemento esencial); ante omisiones, formular requerimiento a los partidos para subsanar; el Consejo Local revisa y, conforme a la normativa, remite al Consejo General para su aprobación definitiva (el registro de coaliciones es competencia del Consejo General del INE)",
+       "Negar el registro definitivamente por las omisiones, sin posibilidad de subsanar"],
+    c:1,
+    ex:"Los convenios de coalición tienen requisitos taxativos en la LGIPE (denominación, partidos integrantes, plataforma común, distribución de candidaturas, distribución de prerrogativas, mecanismo de toma de decisiones, entre otros). Las omisiones subsanables se requieren para subsanación. El registro de coaliciones corresponde al Consejo General del INE (no a los Consejos Locales o Distritales), aunque el procedimiento puede incluir tramitación previa en otras instancias. El Vocal Secretario verifica, integra y remite.",
+    f:"LGIPE (2024), arts. de coaliciones; Reglamento de Elecciones del INE" },
+
+  { sa:"4.2", sal:"Procedimientos y candidaturas", area:"Proceso electoral", dif:"alta",
+    p:null, pt:null,
+    q:"¿Cuál es la diferencia entre 'precampaña' y 'campaña' electoral, y por qué es relevante distinguirlas para el Vocal Secretario?",
+    o:["Son la misma etapa con distintos nombres",
+       "La precampaña es la etapa interna de los partidos para seleccionar candidatos: comprende los actos de proselitismo de los aspirantes a precandidatos hacia los militantes y simpatizantes del propio partido; la campaña es la etapa posterior al registro formal de candidaturas: comprende los actos de proselitismo de los candidatos hacia el electorado en general; la distinción es relevante porque: (a) las reglas de financiamiento y tiempos de radio/TV son distintas, (b) los actos anticipados de campaña (proselitismo al electorado antes del registro) son infracción sancionable mediante PES, (c) el Vocal Secretario debe identificar conductas en cada etapa para el adecuado trámite de denuncias",
+       "La precampaña es para presidencia y la campaña sólo para diputados"],
+    c:1,
+    ex:"La distinción es fundamental. Precampaña: interna del partido, dirigida a militantes/simpatizantes, busca selección de candidato. Campaña: pública, dirigida al electorado, busca el voto, requiere registro formal previo. Los 'actos anticipados de campaña' (proselitismo al electorado antes del registro formal) son infracción sancionable por PES con plazos sumarios. El Vocal Secretario debe reconocer la etapa para tramitar correctamente denuncias y solicitudes de fe pública.",
+    f:"LGIPE (2024), arts. 226-228, 242 y 471" }
+
+];
+
+/* ═══════════════════════════════════════════════════
+   ALEATORIZAR
+═══════════════════════════════════════════════════ */
+function shuffleArray(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+function shuffleOptions(q) {
+  const indices = [0, 1, 2];
+  const shuffled = shuffleArray(indices);
+  return { ...q, o: shuffled.map(i => q.o[i]), c: shuffled.indexOf(q.c) };
+}
+const SUBS = ["1.1","1.2","1.3","1.4","1.5","1.6","2.1","3.1","3.2","4.1","4.2"];
+const shuffledQ = SUBS.flatMap(sub =>
+  shuffleArray(Q.filter(q => q.sa === sub)).map(q => shuffleOptions(q))
+);
+Q.length = 0;
+shuffledQ.forEach(q => Q.push(q));
+
+/* ═══════════════════════════════════════════════════
+   ESTADO GLOBAL
+═══════════════════════════════════════════════════ */
+const TIME_LIMIT = 55 * 60;
+let answers, revealed, current, timerInterval, secondsLeft;
+
+const SS = {
+  "1.1":{bg:"#ffeef4",color:"#8b0038",icon:"⚖️"},
+  "1.2":{bg:"#f5eeff",color:"#4a0080",icon:"📜"},
+  "1.3":{bg:"#eef1ff",color:"#1a237e",icon:"🔍"},
+  "1.4":{bg:"#fff0f0",color:"#8b0000",icon:"📣"},
+  "1.5":{bg:"#fff4e6",color:"#8b4000",icon:"🚺"},
+  "1.6":{bg:"#ffeaea",color:"#7a0000",icon:"⚠️"},
+  "2.1":{bg:"#e8f0ff",color:"#0c3573",icon:"🏛️"},
+  "3.1":{bg:"#eaf5ee",color:"#1a6b3c",icon:"💰"},
+  "3.2":{bg:"#f0f7e8",color:"#2d5a1a",icon:"👥"},
+  "4.1":{bg:"#e5f8f8",color:"#005050",icon:"🗳️"},
+  "4.2":{bg:"#f5eeff",color:"#4a0080",icon:"📋"}
+};
+
+/* ═══════════════════════════════════════════════════
+   INICIO
+═══════════════════════════════════════════════════ */
+function startExam() {
+  answers  = new Array(Q.length).fill(null);
+  revealed = new Array(Q.length).fill(false);
+  current  = 0;
+  document.getElementById('startScreen').classList.add('hidden');
+  document.getElementById('examScreen').classList.remove('hidden');
+  document.getElementById('navBar').classList.remove('hidden');
+  renderQuestion(0);
+  startTimer();
+}
+
+/* ═══════════════════════════════════════════════════
+   RENDER
+═══════════════════════════════════════════════════ */
+function renderQuestion(idx) {
+  current = idx;
+  const q = Q[idx], sc = SS[q.sa] || {bg:"#ffeef4",color:"#8b0038",icon:"📌"};
+  const isR = revealed[idx], sel = answers[idx];
+
+  let ph = '';
+  if (q.p) ph = `<div class="passage"><div class="passage-label">📄 ${q.pt}</div>${q.p.replace(/\n/g,'<br>')}</div>`;
+
+  const difLabel = q.dif === 'muy-alta'
+    ? '<span class="q-dif muy-alta">🔴 Muy alta</span>'
+    : '<span class="q-dif alta">🟠 Alta</span>';
+
+  const L = ['A','B','C'];
+  const opts = q.o.map((o, i) => {
+    let cls = 'option', icon = '';
+    if (isR) {
+      cls += ' disabled';
+      if (i === q.c) { cls += ' correct'; icon = '<span class="opt-icon">✅</span>'; }
+      else if (i === sel && i !== q.c) { cls += ' incorrect'; icon = '<span class="opt-icon">❌</span>'; }
+    } else if (i === sel) cls += ' selected';
+    return `<div class="${cls}" onclick="selOpt(${idx},${i})">
+      <div class="option-letter">${L[i]}</div>
+      <div class="opt-text">${o}</div>${icon}
+    </div>`;
+  }).join('');
+
+  const ri = isR ? (sel === q.c ? '✅ Correcto' : sel === null ? '⏭️ Sin responder' : '❌ Incorrecto') : '';
+
+  document.getElementById('examScreen').innerHTML = `
+    <div class="question-card">
+      <div class="q-meta">
+        <span class="q-badge" style="background:${sc.bg};color:${sc.color}">${sc.icon} ${q.sal}</span>
+        <div style="display:flex;align-items:center;gap:6px">${difLabel}<span class="q-num">${idx+1}/${Q.length}</span></div>
+      </div>
+      ${ph}
+      <div class="question-text">${q.q}</div>
+      <div class="options">${opts}</div>
+      <div class="explanation ${isR ? 'show' : ''}">
+        <strong>${ri}${ri ? ' — ' : ''}Explicación:</strong> ${q.ex}
+        ${q.f ? `<div class="fuente">📚 Fuente: ${q.f}</div>` : ''}
+      </div>
+    </div>
+    ${!isR && answers[idx] !== null
+      ? `<div class="ver-sol-wrap"><button class="btn-ver-sol" onclick="rev(${idx})">Ver explicación 💡</button></div>`
+      : ''}
+  `;
+
+  document.getElementById('progressBar').style.width = ((idx+1)/Q.length*100) + '%';
+  document.getElementById('navCurrent').textContent = idx + 1;
+  document.getElementById('navTotal').textContent   = Q.length;
+  document.getElementById('btnPrev').disabled = idx === 0;
+  document.getElementById('btnNext').textContent = idx === Q.length-1 ? '🏁 Finalizar' : 'Sig. →';
+  window.scrollTo({top: 0, behavior: 'instant'});
+}
+
+function selOpt(qi, oi) { if (revealed[qi]) return; answers[qi] = oi; renderQuestion(qi); }
+function rev(idx) { revealed[idx] = true; renderQuestion(idx); }
+function nextQ() { if (current < Q.length-1) renderQuestion(current+1); else showResults(); }
+function prevQ() { if (current > 0) renderQuestion(current-1); }
+
+/* ═══════════════════════════════════════════════════
+   TIMER
+═══════════════════════════════════════════════════ */
+function startTimer() {
+  secondsLeft = TIME_LIMIT;
+  timerInterval = setInterval(() => {
+    secondsLeft--;
+    const m = Math.floor(secondsLeft/60).toString().padStart(2,'0');
+    const s = (secondsLeft%60).toString().padStart(2,'0');
+    const el = document.getElementById('timer');
+    el.textContent = `${m}:${s}`;
+    el.className = 'timer' + (secondsLeft < 300 ? ' danger' : secondsLeft < 600 ? ' warning' : '');
+    if (secondsLeft <= 0) { clearInterval(timerInterval); showResults(); }
+  }, 1000);
+}
+
+/* ═══════════════════════════════════════════════════
+   RESULTADOS
+═══════════════════════════════════════════════════ */
+function showResults() {
+  clearInterval(timerInterval);
+  document.getElementById('examScreen').classList.add('hidden');
+  document.getElementById('navBar').classList.add('hidden');
+
+  const total    = Q.length;
+  const answered = answers.filter(a => a !== null).length;
+  const correct  = answers.filter((a, i) => a === Q[i].c).length;
+  const wrong    = answered - correct;
+  const skipped  = total - answered;
+  const pct      = Math.round(correct / total * 100);
+
+  const areas = {};
+  Q.forEach((q, i) => {
+    if (!areas[q.area]) areas[q.area] = {total:0, correct:0};
+    areas[q.area].total++;
+    if (answers[i] === q.c) areas[q.area].correct++;
+  });
+
+  const subs = {};
+  Q.forEach((q, i) => {
+    if (!subs[q.sa]) subs[q.sa] = {label:q.sal, total:0, correct:0};
+    subs[q.sa].total++;
+    if (answers[i] === q.c) subs[q.sa].correct++;
+  });
+
+  const weak = Object.entries(subs).filter(([,s]) => s.correct/s.total < 0.6).map(([,s]) => s.label);
+  const cc   = pct >= 70 ? 'score-good' : pct >= 50 ? 'score-mid' : 'score-low';
+  const msg  = pct >= 80 ? '¡Dominio sólido! Tienes un manejo profundo de la normativa de la Vocalía Secretarial.'
+             : pct >= 60 ? 'Buen avance. Profundiza en los casos prácticos y la normativa cruzada de las áreas señaladas.'
+             : 'Diagnóstico completo. Refuerza la normativa específica de cada área antes del examen.';
+
+  const areaColors = {
+    "Jurídico-electoral":                            "#8b0038",
+    "Órganos desconcentrados permanentes":           "#0c3573",
+    "Gestión administrativa electoral del INE":      "#1a6b3c",
+    "Proceso electoral":                             "#4a0080"
+  };
+
+  const rows = Object.entries(areas).map(([name, a]) => {
+    const p    = Math.round(a.correct / a.total * 100);
+    const icon = p >= 80 ? '✅' : p >= 60 ? '⚠️' : '❌';
+    const bc   = p >= 60
+      ? `linear-gradient(90deg,${areaColors[name]||'#8b0038'},#c0003c)`
+      : 'linear-gradient(90deg,#7a0000,#c01010)';
+    return `<div class="area-row">
+      <div class="area-name">${icon} ${name}</div>
+      <div class="area-bar-wrap"><div class="area-bar" style="width:${p}%;background:${bc}"></div></div>
+      <div class="area-pct" style="color:${p>=60?areaColors[name]||'#8b0038':'#7a0000'}">${p}%</div>
+    </div>`;
+  }).join('');
+
+  const wb = weak.length
+    ? `<div class="weak-banner"><h4>🎯 Estudia esto primero:</h4><p>Menos del 60% en estas subáreas. Revisa los ordenamientos específicos de cada una.</p><div class="weak-tags">${weak.map(t=>`<span class="weak-tag">📌 ${t}</span>`).join('')}</div></div>`
+    : `<div style="background:var(--rose-light);border-radius:10px;padding:13px;margin:13px 0;color:var(--rose);font-weight:600;border:1.5px solid var(--rose-mid)">✅ ¡Dominas todas las áreas técnicas del cargo a nivel avanzado!</div>`;
+
+  const tu = TIME_LIMIT - secondsLeft;
+  const tm = Math.floor(tu/60), ts = tu%60;
+
+  // Calcular preguntas muy-alta vs alta
+  const muyAlta = Q.filter(q => q.dif === 'muy-alta');
+  const muyAltaCorr = muyAlta.filter((q,_) => {
+    const qi = Q.indexOf(q);
+    return answers[qi] === q.c;
+  }).length;
+
+  document.getElementById('resultsScreen').innerHTML = `
+    <div class="results-screen">
+      <div style="background:var(--rose-light);border-radius:10px;padding:9px 14px;margin-bottom:16px;font-size:.78rem;color:var(--rose);font-weight:600;border:1.5px solid var(--rose-mid)">
+        📋 DIAGNÓSTICO VOCALÍA SECRETARIAL (v4 · V2) · Alta dificultad · ${new Date().toLocaleDateString('es-MX')}
+      </div>
+      <div class="score-circle ${cc}">${pct}%<div class="score-sub">${correct}/${total}</div></div>
+      <h2 style="font-family:'DM Serif Display',serif;margin-bottom:7px;font-size:1.1rem">${msg}</h2>
+      <p style="margin-bottom:18px;color:var(--muted);font-size:.81rem">Tiempo: ${tm}m ${ts}s · Respondidas: ${answered}/${total}</p>
+      <div class="stats-grid">
+        <div class="stat-card stat-correct"><div class="n">${correct}</div><div class="l">✅ Correctas</div></div>
+        <div class="stat-card stat-wrong"><div class="n">${wrong}</div><div class="l">❌ Incorrectas</div></div>
+        <div class="stat-card stat-skip"><div class="n">${skipped}</div><div class="l">⏭️ Saltadas</div></div>
+      </div>
+      <div style="background:var(--blue-light);border-radius:10px;padding:11px 14px;margin:12px 0;font-size:.8rem;color:var(--blue);text-align:left">
+        <strong>🔴 Preguntas muy alta dificultad:</strong> ${muyAltaCorr}/${muyAlta.length} correctas
+      </div>
+      ${wb}
+      <div style="text-align:left;margin-bottom:22px">
+        <h3 style="font-family:'DM Serif Display',serif;font-size:.9rem;color:var(--ink2);margin-bottom:9px">Desempeño por área</h3>
+        ${rows}
+      </div>
+      <div style="display:flex;gap:9px;justify-content:center;flex-wrap:wrap">
+        <button class="btn btn-primary btn-lg" onclick="reviewExam()">Revisar con explicaciones</button>
+        <button class="btn btn-secondary btn-lg" onclick="location.reload()">🔀 Nuevo diagnóstico</button>
+      </div>
+    </div>
+  `;
+  document.getElementById('resultsScreen').classList.remove('hidden');
+  window.scrollTo(0, 0);
+}
+
+function reviewExam() {
+  document.getElementById('resultsScreen').classList.add('hidden');
+  document.getElementById('examScreen').classList.remove('hidden');
+  document.getElementById('navBar').classList.remove('hidden');
+  revealed = revealed.map(() => true);
+  renderQuestion(0);
+  window.scrollTo(0, 0);
+}
+</script>
+</body>
+</html>
